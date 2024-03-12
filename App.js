@@ -1,44 +1,97 @@
 import { StatusBar } from 'expo-status-bar';
 import Constants from 'expo-constants';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, FlatList, RefreshControl, ScrollView, SectionList, StyleSheet, Text, View } from 'react-native';
 import { useState } from 'react'
 
 export default function App() {
-  const [counter, setCounter] = useState(0);
+  const [list, setList] = useState([
+    { value: 'Item 1' }
+  ]);
+  const [otherList, setOtherList] = useState([
+    {
+      title: 'Title 1',
+      data: ['Item 1 - 1']
+    },
+    {
+      title: 'Title 2',
+      data: ['Item 2 - 1', 'Item 2 - 2', 'Item 2 - 3']
+    }
+  ]);
+
+  const [Refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setList([...list, { value: `Item ${list.length + 1}` }]);
+    setOtherList([...otherList, {
+      title: `Title ${otherList.length + 1}`,
+      data: [
+        `Item ${otherList.length + 1} - 1`,
+        `Item ${otherList.length + 1} - 2`,
+      ]
+    }])
+    setRefreshing(false);
+  }
 
   return (
-    <View style={{ ...styles.container, marginTop: Constants.statusBarHeight }}>
-      <View style={styles.view1}>
-        <View style={styles.v1c1}>
-          <Text>1</Text>
+
+    /* <ScrollView horizontal={false} refreshControl={
+    <RefreshControl
+      refreshing={Refreshing}
+      onRefresh={onRefresh}
+    />
+  } style={{ ...styles.container, marginTop: Constants.statusBarHeight }}>
+    {
+      list.map((element, index) => {
+        return (
+          <View key={index} style={styles.element}>
+            <Text style={styles.text}>{element.value}</Text>
+          </View>
+        )
+      })
+    }
+    <StatusBar style='auto' />
+  </ScrollView> */
+    /* < FlatList
+      keyExtractor={(item, index) => index.toString()}
+      data={list}
+      numColumns={5}
+      style={{ ...styles.container, marginTop: Constants.statusBarHeight }}
+      refreshControl={
+        <RefreshControl
+          refreshing={Refreshing}
+          onRefresh={onRefresh}
+        />
+      }
+      renderItem={
+        ({ item }) => (
+          <View style={styles.element}>
+            <Text style={styles.text}>{item.value}</Text>
+          </View>
+        )
+      }
+    /> */
+    <SectionList
+      style={{ ...styles.container, marginTop: Constants.statusBarHeight }}
+      keyExtractor={(item, index) => index.toString()}
+      sections={otherList}
+      renderItem={({ item }) => (
+        <View style={styles.semiElement}>
+          <Text style={styles.text}>{item}</Text>
         </View>
-        <View style={styles.v1c2}>
-          <Text>2</Text>
+      )}
+      renderSectionHeader={({ section }) => (
+        <View style={styles.element}>
+          <Text style={styles.text}>{section.title}</Text>
         </View>
-        <View style={styles.v1c3}>
-          <Text>3</Text>
-        </View>
-      </View>
-      <View style={styles.view2}>
-        <View style={styles.v2c1}>
-          <Text>4</Text>
-        </View>
-      </View>
-      <View style={styles.view3}>
-        <View style={styles.v3c1}>
-          <Text>5</Text>
-        </View>
-      </View>
-      <View style={styles.view4}>
-        <View style={styles.v4c1}>
-          <Text>6</Text>
-        </View>
-        <View style={styles.v4c2}>
-          <Text>7</Text>
-        </View>
-      </View>
-      <StatusBar style='auto' />
-    </View>
+      )}
+      refreshControl={
+        <RefreshControl
+          refreshing={Refreshing}
+          onRefresh={onRefresh}
+        />
+      }
+    />
 
   );
 }
@@ -48,85 +101,25 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     color: 'black',
-    justifyContent: 'flex-start'
   },
-  view1: {
-    flexDirection: 'row',
-    backgroundColor: 'red',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1
-  },
-  v1c1: {
+  element: {
     backgroundColor: 'cyan',
-    flex: 1,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%'
+    margin: 10,
   },
-
-  v1c2: {
-    backgroundColor: 'pink',
-    flex: 2,
+  semiElement: {
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%'
+    borderColor: 'grey',
+    borderTopWidth: 1
   },
-
-  v1c3: {
-    backgroundColor: 'yellow',
-    flex: 3,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%'
-  },
-  view2: {
-    flexDirection: 'row',
-    backgroundColor: 'red',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1
-  },
-  view3: {
-    flexDirection: 'row',
-    backgroundColor: 'red',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1
-  },
-  v2c1: {
-    backgroundColor: 'red',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%'
-  },
-  v3c1: {
-    backgroundColor: 'green',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%'
-  },
-  view4: {
-    flexDirection: 'row',
-    backgroundColor: 'red',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 8
-  },
-  v4c1: {
-    backgroundColor: 'brown',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%'
-  },
-  v4c2: {
-    backgroundColor: 'blue',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%'
+  text: {
+    color: '#000000',
+    fontSize: 35,
+    fontStyle: 'italic',
+    margin: 10
   }
 });
